@@ -10,7 +10,7 @@ namespace Chapter1
     {
         static void Main(string[] args)
         {
-            sumTwo();
+            interval();
 
             // Do not automatically leave application
             Console.ReadKey(false);
@@ -94,6 +94,30 @@ namespace Chapter1
             int sum2 = Int32.Parse(Console.ReadLine());
 
             Console.WriteLine(sum1 + sum2);
+        }
+
+        static void interval()
+        {
+            Console.Write("Start: ");
+            int start = Int32.Parse(Console.ReadLine());
+
+            Console.Write("End: ");
+            int end = Int32.Parse(Console.ReadLine());
+
+            if (start > end)
+            {
+                for (int i = start; i >= end; i--)
+                {
+                    Console.WriteLine(i);
+                }
+            }
+            else
+            {
+                for (int i = start; i <= end; i++)
+                {
+                    Console.WriteLine(i);
+                }
+            }
         }
     }
 }
