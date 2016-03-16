@@ -7,5 +7,5 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AssignmentComplete
 {
-  
+
 }
