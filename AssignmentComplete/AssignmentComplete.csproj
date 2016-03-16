@@ -55,11 +55,10 @@
     <Compile Include="IStateMachine.cs" />
     <Compile Include="ITruck.cs" />
     <Compile Include="StateMachine.cs" />
-    <Compile Include="Truck.cs" />
-    <Compile Include="IkeaFactory.cs">
+    <Compile Include="Truck.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="MiningFactory.cs" />
+    <Compile Include="Factory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
