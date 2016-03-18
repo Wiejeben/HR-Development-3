@@ -1,71 +1,180 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AssignmentComplete
 {
+	public class AddProductToIKEA : IAction
+	{
+		private IkeaFactory _factory;
+
+		public AddProductToIKEA(IkeaFactory factory)
+		{
+			this._factory = factory;
+		}
+
+		// Create product
+		public void Run ()
+		{
+			this._factory.ProductsToShip.Add (this.CreateProductBox(this._factory.Position + new Vector2(40 + -20 * this._factory.ProductsToShip.Count, 0)));
+		}
+
+		ProductContainer CreateProductBox(Vector2 position)
+		{
+			var box = new ProductContainer (100, this._factory.box);
+			box.Position = position;
+
+			return box;
+		}
+	}
+
 	public class IkeaFactory : IFactory
 	{
-		#region IFactory implementation
+		private Vector2 _position;
+		private ITruck _waitingTruck;
+
+		private List<IStateMachine> _processes = new List<IStateMachine>();
+		private List<IContainer> _products = new List<IContainer>();
+
+		private Texture2D _building, _truck, _container;
+		public Texture2D box;
+
+		// Construct
+		public IkeaFactory(Vector2 position, Texture2D truck, Texture2D building, Texture2D box, Texture2D container)
+		{
+			this._position = position;
+
+			// Textures
+			this._truck = truck;
+			this._building = building;
+			this.box = box;
+			this._container = container;
+
+			this._processes.Add(new Repeat(new Seq(new Timer(1.0f), new Call(new AddProductToIKEA(this)))));
+		}
+
+		// Spawn new truck
 		public ITruck GetReadyTruck ()
 		{
-			throw new NotImplementedException ();
+			// Send truck on its way
+			if (this.ProductsToShip.Count == 10) {
+				ITruck departing = this._waitingTruck;
+				IContainer container = this.ProductsToShip.First ();
+
+				// Fill container to the limit
+				container.AddContent(container.MaxCapacity - container.CurrentAmount);
+
+				// Reset factory variables
+				this._products = new List<IContainer>();
+				this._waitingTruck = null;
+
+				// Add container and send away
+				departing.AddContainer (container);
+				return departing;
+			}
+
+			// Create a new truck
+			if (this._waitingTruck == null) {
+				this._waitingTruck = new VolvoTruck(new Vector2(480, 340), Vector2.Zero, this._truck, this._container, true);	
+			}
+
+			// Send nothing back
+			return null;
 		}
-		public Microsoft.Xna.Framework.Vector2 Position {
+
+		// Factory position
+		public Vector2 Position {
 			get {
-				throw new NotImplementedException ();
+				return this._position;
 			}
 		}
-		public System.Collections.Generic.List<IContainer> ProductsToShip {
+
+		// List of products
+		public List<IContainer> ProductsToShip {
 			get {
-				throw new NotImplementedException ();
+				return this._products;
 			}
 		}
-		#endregion
-		#region IUpdateable implementation
+
+		// Update production
 		public void Update (float dt)
 		{
-			throw new NotImplementedException ();
+			foreach (var process in this._processes) {
+				process.Update (dt);
+			}
 		}
-		#endregion
-		#region IDrawable implementation
-		public void Draw (Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
+
+		// Assets
+		public void Draw (SpriteBatch spriteBatch)
 		{
-			throw new NotImplementedException ();
+			// Draw waiting truck
+			if (this._waitingTruck != null) {
+				this._waitingTruck.Draw (spriteBatch);
+			}
+
+			// Draw factory
+			spriteBatch.Draw (this._building, this._position, null, Color.White, 0f, Vector2.Zero, new Vector2(0.5f, 0.5f), SpriteEffects.None, 0f);
+
+			// Draw products
+			foreach (var product in this._products) {
+				product.Draw (spriteBatch);
+			}
 		}
-		#endregion
 		
 	}
 
-	public class MiningFactory : IFactory
-	{
-		#region IFactory implementation
-		public ITruck GetReadyTruck ()
-		{
-			throw new NotImplementedException ();
-		}
-		public Microsoft.Xna.Framework.Vector2 Position {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		public System.Collections.Generic.List<IContainer> ProductsToShip {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		#endregion
-		#region IUpdateable implementation
-		public void Update (float dt)
-		{
-			throw new NotImplementedException ();
-		}
-		#endregion
-		#region IDrawable implementation
-		public void Draw (Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
-		{
-			throw new NotImplementedException ();
-		}
-		#endregion
-
-	}
+//	public class MiningFactory : IFactory
+//	{
+//		private Vector2 _position;
+//		private Texture2D _building, _truck, _package, _product;
+//		private List<IContainer> _products;
+//
+//		// Construct
+//		public MiningFactory(Vector2 position, Texture2D truck, Texture2D building, Texture2D package, Texture2D product)
+//		{
+//			this._position = position;
+//
+//			this._truck = truck;
+//			this._building = building;
+//			this._package = package;
+//			this._product = product;
+//		}
+//
+//		// Spawn new truck
+//		public ITruck GetReadyTruck ()
+//		{
+//			return new VolvoTruck(new Vector2 (200, 70), new Vector2 (10, 0), this._truck);
+//		}
+//
+//		// Factory position
+//		public Vector2 Position {
+//			get {
+//				return this._position;
+//			}
+//		}
+//
+//		// List of products
+//		public List<IContainer> ProductsToShip {
+//			get {
+//				return this._products;
+//			}
+//		}
+//
+//		// Update production
+//		public void Update (float dt)
+//		{
+//			
+//		}
+//
+//		// Draw factory
+//		public void Draw (SpriteBatch spriteBatch)
+//		{
+//			spriteBatch.Draw (this._building, this._position, null, Color.White, 0f, Vector2.Zero, new Vector2(0.5f, 0.5f), SpriteEffects.None, 0f);
+//		}
+//
+//	}
 }
 

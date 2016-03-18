@@ -9,31 +9,47 @@ namespace AssignmentComplete
 {
 	public class ProductContainer : IContainer
 	{
+		private Texture2D _texture;
+		private Vector2 _position;
+		private int _currentAmount;
+
+		public ProductContainer (int amount, Texture2D texture)
+		{
+			this.AddContent (amount);
+			this._texture = texture;
+		}
+
 		#region IContainer implementation
 
 		public bool AddContent (int amount)
 		{
-			throw new NotImplementedException ();
+			if (this._currentAmount + amount > this.MaxCapacity) {
+				Console.WriteLine ("Too many products!");
+				return false;
+			}
+
+			this._currentAmount += amount;
+			return true;
 		}
 
 		public int CurrentAmount {
 			get {
-				throw new NotImplementedException ();
+				return this._currentAmount;
 			}
 		}
 
 		public int MaxCapacity {
 			get {
-				throw new NotImplementedException ();
+				return 1000;
 			}
 		}
 
 		public Vector2 Position {
 			get {
-				throw new NotImplementedException ();
+				return this._position;
 			}
 			set {
-				throw new NotImplementedException ();
+				this._position = value;
 			}
 		}
 
@@ -43,7 +59,7 @@ namespace AssignmentComplete
 
 		public void Draw (SpriteBatch spriteBatch)
 		{
-			throw new NotImplementedException ();
+			spriteBatch.Draw (this._texture, this._position, null, Color.White, 0f, Vector2.Zero, new Vector2(0.1f, 0.1f), SpriteEffects.None, 0f);
 		}
 
 		#endregion
@@ -53,31 +69,47 @@ namespace AssignmentComplete
 
 	public class OreContainer : IContainer
 	{
+		private Texture2D _texture;
+		private Vector2 _position = Vector2.One * -100;
+		private int _currentAmount;
+
+		public OreContainer (int amount, Texture2D texture)
+		{
+			this.AddContent (amount);
+			this._texture = texture;
+		}
+
 		#region IContainer implementation
 
 		public bool AddContent (int amount)
 		{
-			throw new NotImplementedException ();
+			if (this._currentAmount + amount > this.MaxCapacity) {
+				Console.WriteLine ("Too much ore!");
+				return false;
+			}
+
+			this._currentAmount += amount;
+			return true;
 		}
 
 		public int CurrentAmount {
 			get {
-				throw new NotImplementedException ();
+				return this._currentAmount;
 			}
 		}
 
 		public int MaxCapacity {
 			get {
-				throw new NotImplementedException ();
+				return 1000;
 			}
 		}
 
 		public Vector2 Position {
 			get {
-				throw new NotImplementedException ();
+				return this._position;
 			}
 			set {
-				throw new NotImplementedException ();
+				this._position = value;
 			}
 		}
 
@@ -87,7 +119,7 @@ namespace AssignmentComplete
 
 		public void Draw (SpriteBatch spriteBatch)
 		{
-			throw new NotImplementedException ();
+			spriteBatch.Draw (this._texture, this._position, Color.White);
 		}
 
 		#endregion

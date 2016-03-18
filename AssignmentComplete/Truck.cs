@@ -9,43 +9,105 @@ namespace AssignmentComplete
 {
 	public class VolvoTruck : ITruck
 	{
-		#region ITruck implementation
+		private IContainer _container;
+		private Texture2D _texture, _container_texture;
+		private Vector2 _position, _velocity;
+		public Boolean reverse;
+
+		public VolvoTruck(Vector2 position, Vector2 velocity, Texture2D texture, Texture2D container_texture, Boolean reverse = false)
+		{
+			this._position = position;
+			this._velocity = velocity;
+			this._texture = texture;
+			this._container_texture = container_texture;
+			this.reverse = reverse;
+		}
+
+		// Define velocity
 		public void StartEngine ()
 		{
-			throw new NotImplementedException ();
+			this._velocity = new Vector2 (10, 0);
 		}
+			
+		// Define container
 		public void AddContainer (IContainer container)
 		{
-			throw new NotImplementedException ();
+			this._container = container;
 		}
+
 		public IContainer Container {
 			get {
-				throw new NotImplementedException ();
+				return this._container;
 			}
 		}
+
+		// Set and get position of truck
 		public Vector2 Position {
 			get {
-				throw new NotImplementedException ();
+				return this._position;	
+			}
+			set {
+				this._position = value;
 			}
 		}
+
+		// Set and get position of truck
 		public Vector2 Velocity {
 			get {
-				throw new NotImplementedException ();
+				return this._velocity;	
+			}
+			set {
+				this._velocity = value;
 			}
 		}
-		#endregion
-		#region IUpdateable implementation
+
 		public void Update (float dt)
 		{
-			throw new NotImplementedException ();
+			// Update vehicle position
+			if (this._container != null) {
+				this._position.X = this._position.X - this._velocity.X * dt;
+			}
 		}
-		#endregion
-		#region IDrawable implementation
+
 		public void Draw (SpriteBatch spriteBatch)
 		{
-			throw new NotImplementedException ();
+			SpriteEffects spriteEffect = SpriteEffects.None;
+
+			// Reverse sprite
+			if (this.reverse) {
+				spriteEffect = SpriteEffects.FlipHorizontally;
+			}
+
+			spriteBatch.Draw (this._texture, this._position, null, Color.White, 0f, Vector2.Zero, new Vector2(0.2f, 0.2f), spriteEffect, 0f);
+
+			if (this._container != null) {
+				Vector2 offset = new Vector2 (this._position.X + 40, this._position.Y - 15);
+
+				spriteBatch.Draw (this._container_texture, offset, null, Color.White, 0f, Vector2.Zero, new Vector2(0.2f, 0.2f), spriteEffect, 0f);
+			}
 		}
-		#endregion
-	
+	}
+
+	public class AddTruckFromFactory : IAction
+	{
+		IFactory factory;
+		List<ITruck> trucks;
+
+		public AddTruckFromFactory(IFactory factory, List<ITruck> trucks)
+		{
+			this.factory = factory;
+			this.trucks = trucks;
+		}
+
+		// Spawn new truck and start the engines
+		public void Run ()
+		{
+			var truck = this.factory.GetReadyTruck();
+			if (truck != null)
+			{
+				truck.StartEngine();
+				trucks.Add(truck);
+			}
+		}
 	}
 }
