@@ -65,7 +65,11 @@ namespace AssignmentComplete
 		{
 			// Update vehicle position
 			if (this._container != null) {
-				this._position.X = this._position.X - this._velocity.X * dt;
+				if (this.reverse) {
+					this._position.X = this._position.X - this._velocity.X * dt;	
+				} else {
+					this._position.X = this._position.X + this._velocity.X * dt;
+				}
 			}
 		}
 
@@ -81,7 +85,11 @@ namespace AssignmentComplete
 			spriteBatch.Draw (this._texture, this._position, null, Color.White, 0f, Vector2.Zero, new Vector2(0.2f, 0.2f), spriteEffect, 0f);
 
 			if (this._container != null) {
-				Vector2 offset = new Vector2 (this._position.X + 40, this._position.Y - 15);
+				Vector2 offset = new Vector2 (this._position.X, this._position.Y - 6);
+
+				if (this.reverse) {
+					offset = new Vector2 (this._position.X + 40, this._position.Y - 15);
+				}
 
 				spriteBatch.Draw (this._container_texture, offset, null, Color.White, 0f, Vector2.Zero, new Vector2(0.2f, 0.2f), spriteEffect, 0f);
 			}
